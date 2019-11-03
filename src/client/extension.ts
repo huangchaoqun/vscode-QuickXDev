@@ -120,7 +120,7 @@ function runPlayer() {
         window.showErrorMessage("没有设置QuickX目录");
         return;
     }
-    let playerPath = quickRoot + "/quick/player/";
+    let playerPath = quickRoot + "/";
     if (process.platform == "win32") {
         playerPath += "win32/player3.exe";
     }
