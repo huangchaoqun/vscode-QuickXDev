@@ -120,19 +120,27 @@ function runPlayer() {
         window.showErrorMessage("没有设置QuickX目录");
         return;
     }
-    let playerPath = quickRoot + "/";
+    
+    let playerPath ="";
     if (process.platform == "win32") {
-        playerPath += "win32/player3.exe";
+        playerPath += "/win32/player3.exe";
     }
     else if (process.platform == "darwin") {
-        playerPath += "player3.app/Contents/MacOS/player3";
+        playerPath += "/player3.app/Contents/MacOS/player3";
     }
     else {
         window.showErrorMessage("抱歉，不支持当前制作系统!");
         return;
     }
-
-    if (!existsSync(new URL(playerPath))) {
+    let path1 =  quickRoot + "/quick/player" + playerPath;
+    let path2 =  quickRoot + playerPath;
+    if (existsSync(new URL(path1))) {
+        playerPath = path1;
+    } 
+    else if (existsSync(new URL(path1))){
+        playerPath = path2;
+    }
+    else (!existsSync(new URL(playerPath))) {
         window.showErrorMessage("Player不存在");
         return;
     }
