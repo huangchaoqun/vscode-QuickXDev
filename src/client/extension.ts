@@ -120,71 +120,76 @@ function runPlayer() {
         window.showErrorMessage("没有设置QuickX目录");
         return;
     }
-    
-    let playerPath ="";
-    if (process.platform == "win32") {
-        playerPath += "/win32/player3.exe";
-    }
-    else if (process.platform == "darwin") {
-        playerPath += "/player3.app/Contents/MacOS/player3";
-    }
-    else {
-        window.showErrorMessage("抱歉，不支持当前制作系统!");
-        return;
-    }
-    let path1 =  quickRoot + "/quick/player" + playerPath;
-    let path2 =  quickRoot + playerPath;
-    if (existsSync(new URL(path1))) {
-        playerPath = path1;
-    } 
-    else if (existsSync(new URL(path1))){
-        playerPath = path2;
-    }
-    else (!existsSync(new URL(playerPath))) {
-        window.showErrorMessage("Player不存在");
-        return;
-    }
-
-    let activeFile = window.activeTextEditor.document.fileName;
-    let workDirUri = workspace.getWorkspaceFolder(URI.file(activeFile)).uri;
-    let client = clients.get(workDirUri.toString());
-    if (!client) {
-        return
-    }
-    client.sendRequest("isQuickX").then((isQuickX: boolean) => {
-        if (!isQuickX) {
-            window.showErrorMessage("非 quick 项目下不能运行 Player！");
+    let playerPath = "";
+    try {
+        if (process.platform == "win32") {
+            playerPath += "/win32/player3.exe";
+        }
+        else if (process.platform == "darwin") {
+            playerPath += "/player3.app/Contents/MacOS/player3";
+        }
+        else {
+            window.showErrorMessage("抱歉，不支持当前制作系统!");
+            return;
+        }
+        let path1 = quickRoot + "/quick/player" + playerPath;
+        let path2 = quickRoot + playerPath;
+        if (existsSync(new URL(path1))) {
+            playerPath = path1;
+        }
+        else if (existsSync(new URL(path1))) {
+            playerPath = path2;
+        }
+        else {
+            window.showErrorMessage(path2 + "Player不存在" + path1);
             return;
         }
 
-        let playerFsPath = URI.parse(playerPath).fsPath;
-        // 加上参数
-        let args: string[] = [];
-        args.push("-workdir");
-        args.push(workDirUri.fsPath);
-        let configPath = workDirUri.toString() + "/src/config.lua";
-        let config = getQuickConfig(configPath);
-        if (config) {
-            let debug = config.debug;
-            if (debug == 0) {
-                args.push("-disable-write-debug-log");
-                args.push("-disable-console");
-            }
-            else if (debug == 1) {
-                args.push("-disable-write-debug-log");
-                args.push("-console");
-            }
-            else if (debug == 2) {
-                args.push("-write-debug-log");
-                args.push("-console");
-            }
-            args.push("-size");
-            args.push(config.width + "x" + config.height);
+        let activeFile = window.activeTextEditor.document.fileName;
+        let workDirUri = workspace.getWorkspaceFolder(URI.file(activeFile)).uri;
+        let client = clients.get(workDirUri.toString());
+        if (!client) {
+            return
         }
+        client.sendRequest("isQuickX").then((isQuickX: boolean) => {
+            if (!isQuickX) {
+                window.showErrorMessage("非 quick 项目下不能运行 Player！");
+                return;
+            }
 
-        // 运行
-        playerProcess = execFile(playerFsPath, args);
-    });
+            let playerFsPath = URI.parse(playerPath).fsPath;
+            // 加上参数
+            let args: string[] = [];
+            args.push("-workdir");
+            args.push(workDirUri.fsPath);
+            let configPath = workDirUri.toString() + "/src/config.lua";
+            let config = getQuickConfig(configPath);
+            if (config) {
+                let debug = config.debug;
+                if (debug == 0) {
+                    args.push("-disable-write-debug-log");
+                    args.push("-disable-console");
+                }
+                else if (debug == 1) {
+                    args.push("-disable-write-debug-log");
+                    args.push("-console");
+                }
+                else if (debug == 2) {
+                    args.push("-write-debug-log");
+                    args.push("-console");
+                }
+                args.push("-size");
+                args.push(config.width + "x" + config.height);
+            }
+
+            // 运行
+            playerProcess = execFile(playerFsPath, args);
+        });
+    }
+    catch (e) {
+        window.showErrorMessage(e.message);
+        return;
+    }
 }
 // 获取Quick项目配置信息
 function getQuickConfig(configPath: string): { debug: number, width: number, height: number } {

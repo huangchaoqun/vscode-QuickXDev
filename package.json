@@ -9,12 +9,12 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/leitwolf/vscode-QuickXDev.git"
+        "url": "https://github.com/huangchaoqun/vscode-QuickXDev.git"
     },
     "bugs": {
-        "url": "https://github.com/leitwolf/vscode-QuickXDev/issues"
+        "url": "https://github.com/huangchaoqun/vscode-QuickXDev/issues"
     },
-    "homepage": "https://github.com/leitwolf/vscode-QuickXDev/blob/master/README.md",
+    "homepage": "https://github.com/huangchaoqun/vscode-QuickXDev/blob/master/README.md",
     "keywords": [
         "lua",
         "quick cocos2dx"
