@@ -134,10 +134,12 @@ function runPlayer() {
         }
         let path1 = quickRoot + "/quick/player" + playerPath;
         let path2 = quickRoot + playerPath;
-        if (existsSync(new URL(path1))) {
+        let existsSync1 =existsSync(new URL(path1));
+        let existsSync2 =existsSync(new URL(path2));
+        if (existsSync1) {
             playerPath = path1;
         }
-        else if (existsSync(new URL(path1))) {
+        else if (existsSync2) {
             playerPath = path2;
         }
         else {
